@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Compose</string>
+    <string name="post">Posts</string>
+    <string name="followers">Seguidores</string>
+    <string name="following">Seguindo</string>
+    <string name="edit_profile">Editar Perfil</string>
 </resources>
