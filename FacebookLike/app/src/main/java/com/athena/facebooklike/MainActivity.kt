@@ -9,13 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +26,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import com.athena.facebooklike.data.Shortcut
+import com.athena.facebooklike.data.getRandomItems
 import com.athena.facebooklike.navigation.Destination
 import com.athena.facebooklike.ui.theme.FacebookLikeTheme
 import kotlinx.coroutines.launch
@@ -60,17 +62,15 @@ fun FacebookLikeScaffold(navController: NavHostController) {
         }
     }
     val ctx = LocalContext.current
+    val randomItems = remember { mutableStateOf(getRandomItems(10)) }
+    val shortcut = remember { mutableStateOf(Shortcut.getShortcuts()) }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet {
-                Text("Drawer content")
-            }
-        },
+        drawerContent = { NavigationDrawer(randomItems.value, shortcut.value) },
     ) {
         Scaffold(
-            bottomBar = { BottomNav(navController, onDrawerIconClick) /*my component*/ }
+            bottomBar = { BottomNav(navController, onDrawerIconClick) }
         ) { contentPadding ->
             val stdModifier =
                 Modifier
@@ -89,7 +89,7 @@ fun FacebookLikeScaffold(navController: NavHostController) {
                     )
                 }
                 composable(Destination.Notifications.route) {
-                    NotificationsScreen(navController = navController, modifier = stdModifier)
+                    NotificationsScreen(modifier = stdModifier)
                 }
                 composable(
                     Destination.Detail.route,

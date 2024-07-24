@@ -21,53 +21,41 @@ import com.athena.facebooklike.data.getItem
 
 @Composable
 fun ItemDetailsScreen(itemId: Int, modifier: Modifier) {
-    val item = getItem(itemId)
-    var dessert: Dessert? = null
-    var fruit: Fruit? = null
-    if (item is Dessert) {
-        dessert = item
-    } else if (item is Fruit) {
-        fruit = item
+    val itemDetails = when (val item = getItem(itemId)) {
+        is Dessert -> ItemDetails(item.resId, item.title, item.desc, item.title)
+        is Fruit -> ItemDetails(item.resId, item.name, item.desc, item.origin)
+        else -> null
     }
 
-    val painter = (dessert?.resId ?: fruit?.resId)?.let { painterResource(id = it) }
-    val title = (dessert?.title ?: fruit?.name)
-    val desc = (dessert?.desc ?: fruit?.desc)
-    val origin = (dessert?.title ?: fruit?.origin)
-
-    Column(modifier = modifier.background(color = Color.White)) {
-        painter?.let {
+    itemDetails?.let {
+        Column(modifier = modifier.background(color = Color.White)) {
             Image(
-                painter = it,
+                painter = painterResource(id = it.resId),
                 contentDescription = null,
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.FillWidth
             )
-        }
 
-        title?.let {
             Text(
-                text = it,
+                text = it.title,
                 fontWeight = FontWeight.Bold,
                 fontSize = 25.sp,
                 modifier = Modifier.padding(8.dp)
             )
-        }
 
-        origin?.let {
             Text(
-                text = it,
+                text = it.origin,
                 fontSize = 12.sp,
                 modifier = Modifier.padding(8.dp)
             )
-        }
 
-        desc?.let {
             Text(
-                text = it,
+                text = it.description,
                 textAlign = TextAlign.Justify,
                 modifier = Modifier.padding(8.dp)
             )
         }
     }
 }
+
+data class ItemDetails(val resId: Int, val title: String, val description: String, val origin: String)
